@@ -1,3 +1,6 @@
+from animporter.constants import TRANSITIONS
+
+
 class Frame:
 	def __init__(self, pos, rot):
 		self.pos = pos
@@ -42,7 +45,29 @@ def mix(begin, end, percentage, transition):
 	return (1 - transition(percentage)) * begin + transition(percentage) * end
 
 def get_transition(name):
-	return linear
+	# transition modifiers
+	name, _ = pop_prefix(name, "ease")
+	name, ease_in = pop_prefix(name, "in")
+	name, ease_out = pop_prefix(name, "out")
 
-def linear(x):
-	return x
+	# build function
+	base_transition = TRANSITIONS[name]
+	transition = None
+	if ease_in and ease_out:
+		transition = lambda x: \
+			base_transition(2*x) / 2 if x < 0.5 else 1/2 + invert(base_transition)(2*x - 1) / 2
+	elif ease_out:
+		transition = invert(base_transition)
+	else:
+		transition = base_transition
+	
+	return transition
+
+def invert(transition):
+	return lambda x: 1 - transition(1 - x)
+	
+# if str starts with prefix, strip this prefix and return True
+def pop_prefix(str, prefix):
+	if str.startswith(prefix):
+		return str[ len(prefix) : ], True
+	return str, False
