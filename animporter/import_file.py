@@ -7,22 +7,17 @@ import sys
 def import_file(filename, out_dir):
 	project = parse_json(filename)
 	speedup = get_speedup(project["project"]["tempo"])
-
-	# add backwards links
 	objects = project["timelines"]
-	add_children_links(objects)
+	# add_children_links(objects) # not necessary
 
-	# find individual animations
-	for folder in filter_type("folder", objects):
-		npc_name = folder["name"]
-		for char in filter_type("char", map_objects_to_ids(objects, folder["children"])):
-			# one animation
-			anim_name = char["name"]
-			timeline = collect_bodyparts(objects, char["parts"], speedup)
-			timeline.pop("hat")
-			char_timeline = get_keyframes_list(char["keyframes"], speedup)
-			timeline["char"] = char_timeline
-			create_animation(out_dir, npc_name, anim_name, timeline)
+	for char in filter_type("char", objects):
+		# one animation
+		anim_path = char["name"]
+		timeline = collect_bodyparts(objects, char["parts"], speedup)
+		timeline.pop("hat")
+		char_timeline = get_keyframes_list(char["keyframes"], speedup)
+		timeline["char"] = char_timeline
+		create_animation(out_dir, anim_path, timeline)
 
 
 def parse_json(filename):

@@ -688,7 +688,7 @@
 		{
 			"id": "8JGD2RF8C5PNAUKA",
 			"type": "char",
-			"name": "jump",
+			"name": "steve/jump",
 			"temp": "D1206WU90CGQ63OI",
 			"color": "#80007B",
 			"hide": false,

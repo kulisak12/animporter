@@ -3,7 +3,7 @@ class Frame:
 		self.pos = pos
 		self.rot = rot
 
-def create_animation(out_dir, npc_name, anim_name, timeline):
+def create_animation(out_dir, anim_path, timeline):
 	interpolated = {}
 	for part, keyframes in timeline.items():
 		interpolated[part] = interpolate(keyframes)
