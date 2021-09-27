@@ -10,7 +10,7 @@ class State:
 		self.pos = pos
 		self.rot = rot
 
-def create_animation(out_dir, anim_path, timeline):
+def render_frames(timeline):
 	# synchronize animation begin and end
 	min_time = min([ keyframes[0]["time"] for keyframes in timeline.values() ])
 	for keyframes in timeline.values():
@@ -32,6 +32,8 @@ def create_animation(out_dir, anim_path, timeline):
 	for i in range(len(frames) - 1, 0, -1):
 		transform_to_local(frames[i - 1], frames[i])
 	setup_first_frame(frames[0])
+
+	return frames
 
 
 def init_armor_stands(frame):
