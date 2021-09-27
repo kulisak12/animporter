@@ -72,7 +72,7 @@ def condition_command(n, anim_path):
 	return f"execute if score ${anim_id} npc matches {n} as @e[type=armor_stand,tag=npc_{anim_id}] at @s run function npc:{anim_path}/{get_function_name(n)}\n"
 
 def float_list(vec):
-	return f"[{vec[0]}f,{vec[1]}f,{vec[2]}f]"
+	return "[{:.5f}f,{:.5f}f,{:.5f}f]".format(vec[0], vec[1], vec[2])
 
 def local_coords(pos, rot):
-	return f"^{pos[0]} ^{pos[1]} ^{pos[2]} ~{rot[1]} ~"
+	return "^{:.5f} ^{:.5f} ^{:.5f} ~{:.5f} ~".format(pos[0], pos[1], pos[2], rot[1])
