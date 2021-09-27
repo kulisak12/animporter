@@ -29,8 +29,9 @@ def create_animation(out_dir, anim_path, timeline):
 	for frame in frames:
 		init_armor_stands(frame)
 		adjust_for_body_rot(frame)
-	for i in range(1, len(frames)):
+	for i in range(len(frames) - 1, 0, -1):
 		transform_to_local(frames[i - 1], frames[i])
+	setup_first_frame(frames[0])
 
 
 def init_armor_stands(frame):
@@ -50,20 +51,35 @@ def adjust_for_body_rot(frame):
 # replace absolute coordinates with ones relative to angle of view
 def transform_to_local(previous_frame, frame):
 	for part in "upper", "lower":
+		# position
 		move = frame[part].pos - previous_frame[part].pos
 		angle = previous_frame[part].rot[1] # position will be changed before rotation
-		forward_vec = rotate(np.array([0, 0, 1]), [0, angle, 0])
-		side_vec = rotate(forward_vec, [0, 90, 0])
-		frame[part].pos = np.array([
-			np.dot(move, side_vec),
-			move[1],
-			np.dot(move, forward_vec)
-		])
+		frame[part].pos = to_local(move, angle)
+		# rotation
+		frame[part].rot -= previous_frame[part].rot
+
+def setup_first_frame(frame):
+	# upper is the main armor stand
+	offset = frame["lower"].pos - frame["upper"].pos
+	frame["lower"].pos = to_local(offset, frame["upper"].rot[1])
+	frame["upper"].pos = np.array([0, 0, 0])
+
+	frame["lower"].rot -= frame["upper"].rot
+	frame["upper"].rot = np.array([0, 0, 0])
 
 # rotate vector in 3D
 def rotate(vec, rot):
 	matrix = R.from_euler("xyz", rot, degrees=True)
 	return matrix.apply(vec)
+
+def to_local(vec, angle):
+	forward_vec = rotate(np.array([0, 0, 1]), [0, angle, 0])
+	side_vec = rotate(forward_vec, [0, 90, 0])
+	return np.array([
+		np.dot(vec, side_vec),
+		vec[1],
+		np.dot(vec, forward_vec)
+	])
 
 # group states by frames
 # object of lists -> list of objects
