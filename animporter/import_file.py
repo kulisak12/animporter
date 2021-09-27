@@ -40,13 +40,13 @@ def get_keyframes_list(keyframes, speedup):
 		# pack rotation and position into vectors
 		keyframe["rot"] = np.array([
 			properties.get("ROT_X", 0),
-			properties.get("ROT_Y", 0),
-			properties.get("ROT_Z", 0)
+			properties.get("ROT_Z", 0), # swap y and z
+			properties.get("ROT_Y", 0)
 		])
 		keyframe["pos"] = np.array([
 			properties.get("POS_X", 0),
-			properties.get("POS_Y", 0),
-			properties.get("POS_Z", 0)
+			properties.get("POS_Z", 0),
+			properties.get("POS_Y", 0)
 		])
 		# default transition type is linear
 		keyframe["transition"] = properties.get("TRANSITION", "linear")
