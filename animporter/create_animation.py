@@ -1,5 +1,8 @@
+from animporter.constants import *
 import math
-from animporter.constants import TRANSITIONS
+import numpy as np
+from scipy.spatial.transform import Rotation as R
+
 
 
 class State:
@@ -19,8 +22,46 @@ def create_animation(out_dir, anim_path, timeline):
 	for part, keyframes in timeline.items():
 		interpolated[part] = interpolate(keyframes, last_frame_time)
 
+	# process individual frames
 	frames = separate_frames(interpolated, last_frame_time + 1)
+	for frame in frames:
+		init_armor_stands(frame)
+		adjust_for_body_rot(frame)
+	for i in range(1, len(frames)):
+		transform_to_local(frames[i - 1], frames[i])
 
+
+def init_armor_stands(frame):
+	frame["upper"] = frame["char"]
+	frame["lower"] = frame["char"]
+	frame["lower"].pos[1] -= STANDS_OFFSET
+	del frame["char"]
+
+def adjust_for_body_rot(frame):
+	body_rot = frame["body"].rot
+	# move upper armor stand to still be on top of body
+	frame["upper"].pos = frame["lower"].pos + rotate(np.array([0, STANDS_OFFSET, 0]), body_rot)
+	# inherit rotation
+	for part in frame["head"], frame["left_arm"], frame["right_arm"]:
+		part.rot += body_rot
+
+# replace absolute coordinates with ones relative to angle of view
+def transform_to_local(previous_frame, frame):
+	for part in "upper", "lower":
+		move = frame[part].pos - previous_frame[part].pos
+		angle = previous_frame[part].rot[1] # position will be changed before rotation
+		forward_vec = rotate(np.array([0, 0, 1]), [0, angle, 0])
+		side_vec = rotate(forward_vec, [0, 90, 0])
+		frame[part].pos = np.array([
+			np.dot(move, side_vec),
+			move[1],
+			np.dot(move, forward_vec)
+		])
+
+# rotate vector in 3D
+def rotate(vec, rot):
+	matrix = R.from_euler("xyz", rot, degrees=True)
+	return matrix.apply(vec)
 
 # group states by frames
 # object of lists -> list of objects

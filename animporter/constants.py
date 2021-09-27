@@ -3,6 +3,7 @@ import math
 
 
 TPS = 20
+STANDS_OFFSET = 0.586
 
 # based on Mine-imator source code
 def elastic(x):
