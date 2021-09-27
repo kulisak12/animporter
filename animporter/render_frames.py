@@ -8,15 +8,15 @@ from scipy.spatial.transform import Rotation as R
 
 class State:
 	def __init__(self, pos, rot):
-		self.pos = pos
-		self.rot = rot
+		self.pos = copy.deepcopy(pos)
+		self.rot = copy.deepcopy(rot)
 
 def render_frames(timeline):
 	# synchronize animation begin and end
 	min_time = min([ keyframes[0]["time"] for keyframes in timeline.values() ])
 	for keyframes in timeline.values():
 		shift_time(keyframes, min_time)
-	max_time = min([ keyframes[len(keyframes) - 1]["time"] for keyframes in timeline.values() ])
+	max_time = max([ keyframes[len(keyframes) - 1]["time"] for keyframes in timeline.values() ])
 	last_frame_time = int(math.ceil(max_time))
 
 	interpolated = {}
