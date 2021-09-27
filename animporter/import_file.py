@@ -1,3 +1,4 @@
+from animporter.create_files import create_files
 from animporter.render_frames import render_frames
 from animporter.constants import *
 import json
@@ -17,8 +18,10 @@ def import_file(filename, out_dir):
 		del timeline["hat"]
 		char_timeline = get_keyframes_list(char["keyframes"], speedup)
 		timeline["char"] = char_timeline
+
 		frames = render_frames(timeline)
 		del timeline
+		create_files(out_dir, anim_path, frames)
 
 
 def parse_json(filename):
