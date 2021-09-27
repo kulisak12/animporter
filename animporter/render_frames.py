@@ -1,4 +1,5 @@
 from animporter.constants import *
+import copy
 import math
 import numpy as np
 from scipy.spatial.transform import Rotation as R
@@ -21,7 +22,7 @@ def render_frames(timeline):
 	interpolated = {}
 	for part, keyframes in timeline.items():
 		interpolated[part] = interpolate(keyframes, last_frame_time)
-	del keyframes
+	del timeline
 
 	# process individual frames
 	frames = separate_frames(interpolated, last_frame_time + 1)
@@ -37,8 +38,8 @@ def render_frames(timeline):
 
 
 def init_armor_stands(frame):
-	frame["upper"] = frame["char"]
-	frame["lower"] = frame["char"]
+	frame["upper"] = copy.deepcopy(frame["char"])
+	frame["lower"] = copy.deepcopy(frame["char"])
 	frame["lower"].pos[1] -= STANDS_OFFSET
 	del frame["char"]
 
