@@ -43,7 +43,8 @@ def init_armor_stands(frame):
 def adjust_for_body_rot(frame):
 	body_rot = frame["body"].rot
 	# move upper armor stand to still be on top of body
-	frame["upper"].pos = frame["lower"].pos + rotate(np.array([0, STANDS_OFFSET, 0]), body_rot)
+	offset = rotate(np.array([0, STANDS_OFFSET, 0]), body_rot)
+	frame["upper"].pos = frame["lower"].pos + rotate(offset, frame["lower"].rot)
 	# inherit rotation
 	for part in frame["head"], frame["left_arm"], frame["right_arm"]:
 		part.rot += body_rot
