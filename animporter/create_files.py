@@ -3,9 +3,10 @@ import os
 def create_files(out_dir, anim_path, frames):
 	# create directories
 	os.chdir(out_dir)
-	if not os.path.exists(anim_path):
-		os.makedirs(anim_path)
-	os.chdir(out_dir + "/" + anim_path)
+	anim_path_from_namespace = "functions/" + anim_path
+	if not os.path.exists(anim_path_from_namespace):
+		os.makedirs(anim_path_from_namespace)
+	os.chdir(out_dir + "/" + anim_path_from_namespace)
 
 	for i in range(len(frames)):
 		create_frame_file(frames, i)
