@@ -21,9 +21,11 @@ def create_animation(out_dir, anim_path, timeline):
 	interpolated = {}
 	for part, keyframes in timeline.items():
 		interpolated[part] = interpolate(keyframes, last_frame_time)
+	del keyframes
 
 	# process individual frames
 	frames = separate_frames(interpolated, last_frame_time + 1)
+	del interpolated
 	for frame in frames:
 		init_armor_stands(frame)
 		adjust_for_body_rot(frame)
