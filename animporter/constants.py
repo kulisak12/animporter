@@ -4,6 +4,7 @@ import math
 
 TPS = 20
 STANDS_OFFSET = 0.586
+POINTS_PER_BLOCK = 16
 
 # based on Mine-imator source code
 def elastic(x):
