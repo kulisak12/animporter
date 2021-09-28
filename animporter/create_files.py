@@ -1,18 +1,26 @@
+from contextlib import contextmanager
 import os
+
+@contextmanager
+def cwd(path):
+    oldpwd=os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(oldpwd)
 
 def create_files(out_dir, anim_path, frames):
 	# create directories
-	os.chdir(out_dir)
-	anim_path_from_namespace = "functions/" + anim_path
-	if not os.path.exists(anim_path_from_namespace):
-		os.makedirs(anim_path_from_namespace)
-	os.chdir(anim_path_from_namespace)
-
-	for i in range(len(frames)):
-		create_frame_file(frames, i)
-	create_tick_file(len(frames), anim_path)
-	create_play_file(anim_path)
-	create_stop_file(anim_path)
+	with cwd(out_dir):
+		if not os.path.exists(anim_path):
+			os.makedirs(anim_path)
+		with cwd(anim_path):
+			for i in range(len(frames)):
+				create_frame_file(frames, i)
+			create_tick_file(len(frames), anim_path)
+			create_play_file(anim_path)
+			create_stop_file(anim_path)
 
 
 def create_frame_file(frames, n):
@@ -47,6 +55,12 @@ def create_stop_file(anim_path):
 	with open("stop.mcfunction", "w") as f:
 		f.write(f"tag @e[type=armor_stand] remove npc_{anim_id}\n")
 		f.write(f"schedule clear npc:{anim_path}/tick\n")
+
+def create_template_file(out_dir):
+	with cwd(out_dir):
+		with open("spawn.mcfunction", "w") as f:
+			f.write("summon armor_stand ~ ~ ~ {NoGravity:1b,Invisible:1b,DisabledSlots:-1,ArmorItems:[{},{},{},{id:\"minecraft:white_wool\",Count:1b,tag:{CustomModelData:1}}],HandItems:[{id:\"minecraft:white_wool\",Count:1b,tag:{CustomModelData:2}},{id:\"minecraft:white_wool\",Count:1b,tag:{CustomModelData:3}}],Tags:[\"npc_upper\"]}\n")
+			f.write("summon armor_stand ~ ~-0.586 ~ {NoGravity:1b,Invisible:1b,DisabledSlots:-1,ArmorItems:[{},{},{},{id:\"minecraft:white_wool\",Count:1b,tag:{CustomModelData:4}}],HandItems:[{id:\"minecraft:white_wool\",Count:1b,tag:{CustomModelData:5}},{id:\"minecraft:white_wool\",Count:1b,tag:{CustomModelData:6}}],Tags:[\"npc_upper\"]}\n")
 
 def get_anim_id(anim_path):
 	# tags cannot contain slashes
