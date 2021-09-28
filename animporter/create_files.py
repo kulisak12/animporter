@@ -6,7 +6,7 @@ def create_files(out_dir, anim_path, frames):
 	anim_path_from_namespace = "functions/" + anim_path
 	if not os.path.exists(anim_path_from_namespace):
 		os.makedirs(anim_path_from_namespace)
-	os.chdir(out_dir + "/" + anim_path_from_namespace)
+	os.chdir(anim_path_from_namespace)
 
 	for i in range(len(frames)):
 		create_frame_file(frames, i)

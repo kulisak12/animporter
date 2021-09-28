@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from animporter.import_file import import_file
+from animporter.import_file import import_file, print_error
 import argparse
-import os
+import json
 
 def main():
 	# parse CLI arguments
@@ -12,7 +12,14 @@ def main():
 
 	args = parser.parse_args()
 	for filename in args.FILE:
-		import_file(filename, os.path.realpath(args.output_dir))
+		try:
+			import_file(filename, args.output_dir)
+		except FileNotFoundError as e:
+			print_error(e.filename + ": No such file or directory")
+		except json.decoder.JSONDecodeError:
+			print_error(filename + ": Not a valid Mine-imator file")
+		except KeyError as e:
+			print_error(filename + ": Not a recognized Mine-imator file (missing entry: '" + e.args[0] + "')")
 	
 if __name__ == '__main__':
 	main()

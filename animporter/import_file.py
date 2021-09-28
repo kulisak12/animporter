@@ -31,7 +31,7 @@ def parse_json(filename):
 # frametime conversion
 def get_speedup(tempo):
 	if tempo != TPS:
-		print(f"warn: animation tempo is {tempo}, will be converted to {TPS}", file=sys.stderr)
+		print_error(f"warn: animation tempo is {tempo}, will be converted to {TPS}")
 	return TPS / tempo
 
 # rebuild the keyframes object into a nicer list
@@ -86,3 +86,6 @@ def map_objects_to_ids(objects, ids):
 
 def filter_type(type, iterable):
 	return filter(lambda x: x["type"] == type, iterable)
+
+def print_error(str):
+	print("animporter: " + str, file=sys.stderr)
