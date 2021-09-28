@@ -12,6 +12,8 @@ setup(
 		"animporter",
 	],
 	install_requires=[
+		"numpy",
+		"scipy",
 	],
 	include_package_data=True,
 	license="MIT",
